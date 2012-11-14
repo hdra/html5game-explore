@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello</title>
+    <script type="text/javascript">
+        (function(){
+            "use strict";
+
+            var canvas, ctx;
+            var sky, mountain, ball, face;
+            var yeti_sprite, zombie1_sprite, zombie2_sprite;
+
+            var frame = 0;
+            var pointerX = 0;
+
+            function init(){
+                canvas = document.getElementById("canvas");
+                ctx = canvas.getContext("2d");
+
+                preLoadAssets();
+                addZombies();
+                setupInput();
+            }
+
+            function preLoadAssets(){
+                var _toPreload = 0;
+
+                var addImage = function(src){
+                    _toPreload++;
+                    var img = new Image();
+                    img.src = src;
+                     img.addEventListener("load", function(){
+                        _toPreload--;
+                    }, false);
+
+                    return img;
+                }
+
+                var checkResources = function () {
+                    console.log(_toPreload);
+                    if(_toPreload == 0)
+                        draw();
+                    else
+                        setTimeout(checkResources,200);
+                }
+
+                sky = addImage("assets/sky.png");
+                mountain = addImage("assets/mountain.png");
+                //face = addImage("assets/face.png");
+                //ball = addImage("assets/ball.png");
+                zombie1_sprite = addImage("assets/zombie1_sprite.png");
+                zombie2_sprite = addImage("assets/zombie2_sprite.png");
+                //yeti_sprite = addImage("assets/yeti_sprite.png");
+
+                checkResources();
+            }
+
+            function draw () {
+                frame += 0.1;
+                drawSky();
+                drawYeti();
+                drawMountain();
+
+                drawZombies();
+
+                requestAnimationFrame(draw);
+            }
+
+            function drawSky(){
+                ctx.drawImage(sky,0,0);
+            }
+
+            function drawMountain(){
+                ctx.drawImage(mountain, 0,0);
+            }
+
+            function drawYeti(){
+                // face
+                ctx.drawImage(face,
+                    pointerX - yeti_sprite.width / 2+187, 188);
+
+                // body
+                ctx.drawImage(yeti_sprite,
+                    0,0, yeti_sprite.width, yeti_sprite.height / 7,
+                    pointerX - yeti_sprite.width/2,0, yeti_sprite.width, yeti_sprite.height)
+            }
+
+            var zombies = new Array();
+            function addZombies(){
+                zombies.push({x:0,
+                              y:550,
+                              direction:1,
+                              sprite: zombie1_sprite});
+                zombies.push({x:Math.random() * 1366,
+                              y:Math.random() * 500 + 250,
+                              direction:1,
+                              sprite: zombie2_sprite});
+                zombies.push({x:Math.random() * 1366,
+                              y:Math.random() * 500 + 250,
+                              direction:1,
+                              sprite: zombie2_sprite});
+                zombies.push({x:Math.random() * 1366,
+                              y:Math.random() * 500 + 250,
+                              direction:1,
+                              sprite: zombie2_sprite});
+            }
+
+            function drawZombies(){
+
+                for(var i=0; i < zombies.length; i++){
+                    var sprite = zombies[i].sprite;
+                    ctx.drawImage(sprite,
+                        Math.floor(frame%4) * sprite.width/4,0, sprite.width/4, sprite.height,
+                        zombies[i].x,zombies[i].y, sprite.width/4, sprite.height);
+
+                    zombies[i].x += 5 * zombies[i].direction;
+
+                    if(zombies[i].x > 1366 || zombies[i].x < 0){
+                        zombies[i].direction *= -1;
+                    }
+                }
+            }
+
+            function setupInput(){
+                document.body.addEventListener('MSPointerMove', function(ev){
+                    pointerX = ev.clientX;
+
+                },false;)
+
+                document.body.addEventListener('MSPointerUp', function(ev){
+                    // stiff
+                }, false)
+            }
+
+            window.addEventListener('DOMContentLoaded', init, false);
+        })();
+    </script>
+    <style type="text/css">
+        @-ms-viewport{
+            width: 1366px;
+            height: 768px;
+        }
+
+        body{
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            -ms-touch-action: none;
+        }
+
+    </style>
+</head>
+<body>
+    <canvas id="canvas" height="768" width="1366"></canvas>
+</body>
+</html>
