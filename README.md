@@ -1,0 +1,2 @@
+## HTML5 Game Exploration ##
+Another random repository to dump every random thing I found on the internet. Mostly contains a tutorial I followed or some random stuff that I play with. Hopefully I can get some stuff out to a more serious project someday.
